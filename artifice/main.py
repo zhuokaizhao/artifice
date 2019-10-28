@@ -430,6 +430,7 @@ class Artifice:
             fig, axes = vis.plot_image(image, image, dist_image, colorbar=True)
             axes[0, 1].plot(prediction[:, 1], prediction[:, 0], 'rx')
             axes[0, 2].plot(prediction[:, 1], prediction[:, 0], 'rx')
+            print(prediction)
             logger.info(f"prediction:\n{prediction}")
             vis.show(join(self.figs_dir, 'prediction.pdf'))
             if not self.show:
