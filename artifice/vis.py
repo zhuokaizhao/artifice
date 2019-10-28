@@ -59,7 +59,7 @@ def plot_image(*images, columns=10, ticks=True, scale=20, colorbar=False,
         ax = axes[i // columns, i % columns]
         if image is None:
             ax.axis('off')
-        continue
+            continue
         im = ax.imshow(np.squeeze(image), cmap=cmaps[i], **kwargs)
         if colorbar:
             fig.colorbar(im, ax=ax, orientation='horizontal',
@@ -67,7 +67,7 @@ def plot_image(*images, columns=10, ticks=True, scale=20, colorbar=False,
     for ax in axes.ravel():
         if not ticks:
             ax.axis('off')
-            ax.set_aspect('equal')
+        ax.set_aspect('equal')
     if cram:
         fig.subplots_adjust(wspace=0, hspace=0)
     return fig, axes
