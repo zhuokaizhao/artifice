@@ -60,22 +60,22 @@ class RandomPrioritizer(SimulatedPrioritizer):
 
 
 class ModelUncertaintyPrioritizer(Prioritizer):
-  """Uses the `uncertainty_on_batch` method of ArtificeModel to prioritize each
-  image."""
+    """Uses the `uncertainty_on_batch` method of ArtificeModel to prioritize each
+    image."""
 
-  def __init__(self, *args, model, load_freq=200, **kwargs):
-    """
-    :param model: model to use
-    :param load_freq: how frequently to load the weights
+    def __init__(self, *args, model, load_freq=200, **kwargs):
+        """
+        :param model: model to use
+        :param load_freq: how frequently to load the weights
 
-    """
-    self.model = model
-    self.load_freq = load_freq
-    self.count = 0
-    super().__init__(*args, **kwargs)
+        """
+        self.model = model
+        self.load_freq = load_freq
+        self.count = 0
+        super().__init__(*args, **kwargs)
 
-  def prioritize(self, images):
-    if self.count % self.load_freq == 0:
-      self.model.load_weights()
-    self.count += 1
-    return self.model.uncertainty_on_batch(images)
+    def prioritize(self, images):
+        if self.count % self.load_freq == 0:
+            self.model.load_weights()
+        self.count += 1
+        return self.model.uncertainty_on_batch(images)

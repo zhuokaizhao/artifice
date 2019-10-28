@@ -47,137 +47,137 @@ def _ensure_dirs_exist(dirs):
 
 
 class Artifice:
-  """Bag of state or Main() class that directs a single `artifice` run.
+    """Bag of state or Main() class that directs a single `artifice` run.
 
-  All arguments are required keyword arguments, for the sake of
-  correctness. Defaults are specified in the command-line defaults for this
-  script. Run `python artifice.py -h` for more info.
+    All arguments are required keyword arguments, for the sake of
+    correctness. Defaults are specified in the command-line defaults for this
+    script. Run `python artifice.py -h` for more info.
 
-  # todo: copy docs here
+    # todo: copy docs here
 
-  """
+    """
 
-  def __init__(self, *,  # pylint: disable=too-many-statements
-               commands,
-               data_root,
-               model_root,
-               overwrite,
-               deep,
-               figs_dir,
-               convert_mode,
-               transformation,
-               identity_prob,
-               priority_mode,
-               labeled,
-               annotation_mode,
-               record_size,
-               annotation_delay,
-               image_shape,
-               data_size,
-               test_size,
-               batch_size,
-               num_objects,
-               pose_dim,
-               num_shuffle,
-               base_shape,
-               level_filters,
-               level_depth,
-               model,
-               multiscale,
-               use_var,
-               dropout,
-               initial_epoch,
-               epochs,
-               learning_rate,
-               tol,
-               num_parallel_calls,
-               verbose,
-               keras_verbose,
-               eager,
-               show,
-               cache,
-               seconds):
-    # main
-    self.commands = commands
+    def __init__(self, *,  # pylint: disable=too-many-statements
+                commands,
+                data_root,
+                model_root,
+                overwrite,
+                deep,
+                figs_dir,
+                convert_mode,
+                transformation,
+                identity_prob,
+                priority_mode,
+                labeled,
+                annotation_mode,
+                record_size,
+                annotation_delay,
+                image_shape,
+                data_size,
+                test_size,
+                batch_size,
+                num_objects,
+                pose_dim,
+                num_shuffle,
+                base_shape,
+                level_filters,
+                level_depth,
+                model,
+                multiscale,
+                use_var,
+                dropout,
+                initial_epoch,
+                epochs,
+                learning_rate,
+                tol,
+                num_parallel_calls,
+                verbose,
+                keras_verbose,
+                eager,
+                show,
+                cache,
+                seconds):
+        # main
+        self.commands = commands
 
-    # file settings
-    self.data_root = data_root
-    self.model_root = model_root
-    self.overwrite = overwrite
-    self.deep = deep
-    self.figs_dir = figs_dir
+        # file settings
+        self.data_root = data_root
+        self.model_root = model_root
+        self.overwrite = overwrite
+        self.deep = deep
+        self.figs_dir = figs_dir
 
-    # data settings
-    self.convert_modes = utils.listwrap(convert_mode)
-    self.transformation = transformation
-    self.identity_prob = identity_prob
-    self.priority_mode = priority_mode
-    self.labeled = labeled
+        # data settings
+        self.convert_modes = utils.listwrap(convert_mode)
+        self.transformation = transformation
+        self.identity_prob = identity_prob
+        self.priority_mode = priority_mode
+        self.labeled = labeled
 
-    # annotation settings
-    self.annotation_mode = annotation_mode
-    self.record_size = record_size
-    self.annotation_delay = annotation_delay
+        # annotation settings
+        self.annotation_mode = annotation_mode
+        self.record_size = record_size
+        self.annotation_delay = annotation_delay
 
-    # data sizes/settings
-    self.image_shape = image_shape
-    self.data_size = data_size
-    self.test_size = test_size
-    self.batch_size = batch_size
-    self.num_objects = num_objects
-    self.pose_dim = pose_dim
-    self.num_shuffle = num_shuffle
+        # data sizes/settings
+        self.image_shape = image_shape
+        self.data_size = data_size
+        self.test_size = test_size
+        self.batch_size = batch_size
+        self.num_objects = num_objects
+        self.pose_dim = pose_dim
+        self.num_shuffle = num_shuffle
 
-    # model architecture
-    self.base_shape = utils.listify(base_shape, 2)
-    self.level_filters = level_filters
-    self.level_depth = level_depth
+        # model architecture
+        self.base_shape = utils.listify(base_shape, 2)
+        self.level_filters = level_filters
+        self.level_depth = level_depth
 
-    # model type settings
-    self.model = model
-    self.multiscale = multiscale
-    self.use_var = use_var
+        # model type settings
+        self.model = model
+        self.multiscale = multiscale
+        self.use_var = use_var
 
-    # hyperparameters
-    self.dropout = dropout
-    self.initial_epoch = initial_epoch
-    self.epochs = epochs
-    self.learning_rate = learning_rate
-    self.tol = tol
+        # hyperparameters
+        self.dropout = dropout
+        self.initial_epoch = initial_epoch
+        self.epochs = epochs
+        self.learning_rate = learning_rate
+        self.tol = tol
 
-    # runtime settings
-    self.num_parallel_calls = num_parallel_calls
-    self.verbose = verbose
-    self.keras_verbose = keras_verbose
-    self.eager = eager
-    self.show = show
-    self.cache = cache
-    self.seconds = seconds
+        # runtime settings
+        self.num_parallel_calls = num_parallel_calls
+        self.verbose = verbose
+        self.keras_verbose = keras_verbose
+        self.eager = eager
+        self.show = show
+        self.cache = cache
+        self.seconds = seconds
 
-    # globals
-    log.set_verbosity(self.verbose)
-    _set_eager(self.eager)
-    vis.set_show(self.show)
-    self._set_num_parallel_calls()
+        # globals
+        log.set_verbosity(self.verbose)
+        _set_eager(self.eager)
+        vis.set_show(self.show)
+        self._set_num_parallel_calls()
 
-    # derived sizes/shapes
-    self.num_levels = len(self.level_filters)
-    self.input_tile_shape = mod.UNet.compute_input_tile_shape_(
-        self.base_shape, self.num_levels, self.level_depth)
-    self.output_tile_shapes = mod.UNet.compute_output_tile_shapes_(
-        self.base_shape, self.num_levels, self.level_depth)
-    self.output_tile_shape = self.output_tile_shapes[-1]
-    self.num_tiles = dat.ArtificeData.compute_num_tiles(
-        self.image_shape, self.output_tile_shape)
+        # derived sizes/shapes
+        self.num_levels = len(self.level_filters)
+        self.input_tile_shape = mod.UNet.compute_input_tile_shape_(
+            self.base_shape, self.num_levels, self.level_depth)
+        self.output_tile_shapes = mod.UNet.compute_output_tile_shapes_(
+            self.base_shape, self.num_levels, self.level_depth)
+        self.output_tile_shape = self.output_tile_shapes[-1]
+        self.num_tiles = dat.ArtificeData.compute_num_tiles(
+            self.image_shape, self.output_tile_shape)
 
-    # derived model subdirs/paths
-    self.cache_dir = join(self.model_root, 'cache')
-    self.annotation_info_path = join(self.model_root, 'annotation_info.pkl')
-    self.annotated_dir = join(self.model_root, 'annotated')  # model-dependent
+        # derived model subdirs/paths
+        self.cache_dir = join(self.model_root, 'cache')
+        self.annotation_info_path = join(self.model_root, 'annotation_info.pkl')
+        self.annotated_dir = join(self.model_root, 'annotated')  # model-dependent
 
-    # ensure directories exist
-    _ensure_dirs_exist([self.data_root, self.model_root, self.figs_dir,
-                        self.cache_dir, self.annotated_dir])
+        # ensure directories exist
+        _ensure_dirs_exist([self.data_root, self.model_root, self.figs_dir,
+                            self.cache_dir, self.annotated_dir])
 
     """
     Helper functions.
@@ -419,10 +419,10 @@ class Artifice:
 
     def vis_predict(self):
         """Run prediction on the test set and visualize the output."""
-        history_files = glob(join(self.model_dir, '*history.json'))
+        history_files = glob(join(self.model_root, '*history.json'))
 
         hists = dict((fname, utils.json_load(fname)) for fname in history_files)
-        vis.plot_hist(hists)
+        vis.plot_hist(hists, 'u_net')
 
         test_set = self._load_test()
         model = self._load_model()
