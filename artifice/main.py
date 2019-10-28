@@ -421,8 +421,8 @@ class Artifice:
         """Run prediction on the test set and visualize the output."""
         history_files = glob(join(self.model_root, '*history.json'))
 
-        hists = dict((fname, utils.json_load(fname)) for fname in history_files)
-        vis.plot_hist(hists, 'u_net')
+        # hists = dict((fname, utils.json_load(fname)) for fname in history_files)
+        # vis.plot_hist(hists, 'u_net')
 
         test_set = self._load_test()
         model = self._load_model()
