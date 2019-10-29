@@ -70,19 +70,19 @@ def image_from_proto(proto):
                              features['image_dim1'],
                              features['image_dim2']]),)
 
-
+# input: (image, label)
 def proto_from_example(example):
-  image, label = example
-  image = img.as_float(image)
-  label = label.astype(np.float32)
-  feature = {'image': _bytes_feature(image.tostring()),
-             'image_dim0': _int64_feature(image.shape[0]),
-             'image_dim1': _int64_feature(image.shape[1]),
-             'image_dim2': _int64_feature(image.shape[2]),
-             'label': _bytes_feature(label.tostring()),
-             'label_dim0': _int64_feature(label.shape[0]),
-             'label_dim1': _int64_feature(label.shape[1])}
-  return _serialize_feature(feature)
+    image, label = example
+    image = img.as_float(image)
+    label = label.astype(np.float32)
+    feature = {'image': _bytes_feature(image.tostring()),
+                'image_dim0': _int64_feature(image.shape[0]),
+                'image_dim1': _int64_feature(image.shape[1]),
+                'image_dim2': _int64_feature(image.shape[2]),
+                'label': _bytes_feature(label.tostring()),
+                'label_dim0': _int64_feature(label.shape[0]),
+                'label_dim1': _int64_feature(label.shape[1])}
+    return _serialize_feature(feature)
 
 
 def example_from_proto(proto):

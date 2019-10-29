@@ -648,28 +648,28 @@ class UNet(ArtificeModel):
           yield prediction
           del outputs[:art_data.num_tiles]
 
-  def predict_visualization(self, art_data):
-    """Run prediction, reassembling tiles, with the Artifice data."""
-    if tf.executing_eagerly():
-      tiles = []
-      dist_tiles = []
-      outputs = []
-      p = art_data.image_padding()
-      for batch in art_data.prediction_input():
-        tiles += [tile[p[0][0]:, p[1][0]:] for tile in list(batch)]
-        new_outputs = _unbatch_outputs(self.model.predict_on_batch(batch))
-        outputs += new_outputs
-        dist_tiles += [output[-1] for output in new_outputs]
-        while len(outputs) >= art_data.num_tiles:
-          image = art_data.untile(tiles[:art_data.num_tiles])
-          dist_image = art_data.untile(dist_tiles[:art_data.num_tiles])
-          prediction = art_data.analyze_outputs(outputs)
-          yield (image, dist_image, prediction)
-          del outputs[:art_data.num_tiles]
-          del tiles[:art_data.num_tiles]
-          del dist_tiles[:art_data.num_tiles]
-    else:
-      raise NotImplementedError("patient prediction")
+    def predict_visualization(self, art_data):
+        """Run prediction, reassembling tiles, with the Artifice data."""
+        if tf.executing_eagerly():
+            tiles = []
+            dist_tiles = []
+            outputs = []
+            p = art_data.image_padding()
+            for batch in art_data.prediction_input():
+                tiles += [tile[p[0][0]:, p[1][0]:] for tile in list(batch)]
+                new_outputs = _unbatch_outputs(self.model.predict_on_batch(batch))
+                outputs += new_outputs
+                dist_tiles += [output[-1] for output in new_outputs]
+                while len(outputs) >= art_data.num_tiles:
+                    image = art_data.untile(tiles[:art_data.num_tiles])
+                    dist_image = art_data.untile(dist_tiles[:art_data.num_tiles])
+                    prediction = art_data.analyze_outputs(outputs)
+                    yield (image, dist_image, prediction)
+                    del outputs[:art_data.num_tiles]
+                    del tiles[:art_data.num_tiles]
+                    del dist_tiles[:art_data.num_tiles]
+        else:
+            raise NotImplementedError("patient prediction")
 
   def predict_outputs(self, art_data):
     """Run prediction for single tiles images with the Artifice data."""

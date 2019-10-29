@@ -21,38 +21,38 @@ from artifice import img, dat
 
 logger = logging.getLogger('artifice')
 
-
+# get all the paths under dirpath with certain ext
 def _get_paths(dirpath, ext):
-  paths = sorted(glob(join(dirpath, f'*.{ext}')))
-  if not paths:
-    raise FileNotFoundError(f"no '.{ext}' files in {dirpath}")
-  return paths
+    paths = sorted(glob(join(dirpath, f'*.{ext}')))
+    if not paths:
+        raise FileNotFoundError(f"no '.{ext}' files in {dirpath}")
+    return paths
 
 
 def _load_single_labels(labels_path):
-  """Load labels from a single file."""
-  ext = splitext(labels_path)[1]
-  raise NotImplementedError
+    """Load labels from a single file."""
+    ext = splitext(labels_path)[1]
+    raise NotImplementedError
 
 
 def _image_dir_and_label_file(data_root, record_name='labeled_set.tfrecord',
                               image_dirname='images', image_ext='png',
                               labels_filename='labels.npy', test_size=0):
-  """Helper function to performs the conversion when labels are in one file.
+    """Helper function to performs the conversion when labels are in one file.
 
-  Assumes fully labeled data.
+    Assumes fully labeled data.
 
-  :param data_root: root directory
-  :param image_dirname: name of directory containing images by path
-  :param image_ext: extension of images, e.g. 'png', 'jpeg'
-  :param labels_ext: extension of data_root/labels.{ext} file.
+    :param data_root: root directory
+    :param image_dirname: name of directory containing images by path
+    :param image_ext: extension of images, e.g. 'png', 'jpeg'
+    :param labels_ext: extension of data_root/labels.{ext} file.
 
-  """
-  image_paths = _get_paths(join(data_root, image_dirname), image_ext)
-  labels = _load_single_labels(labels_path)
-  raise NotImplementedError
+    """
+    image_paths = _get_paths(join(data_root, image_dirname), image_ext)
+    labels = _load_single_labels(labels_path)
+    raise NotImplementedError
 
-
+# actually loading function
 _label_loaders = {'npy': np.load,
                   'txt': np.loadtxt}
 
@@ -61,43 +61,52 @@ def _image_dir_and_label_dir(data_root, record_name='labeled_set.tfrecord',
                              image_dirname='images', image_ext='png',
                              label_dirname='labels', label_ext='npy',
                              test_size=0, test_name='test_set.tfrecord'):
-  """Performs the conversion when labels in corresponding files.
+    """Performs the conversion when labels in corresponding files.
 
-  :param data_root: 
-  :param record_name: 
-  :param image_dirname: 
-  :param image_ext: 
-  :param label_dirname: 
-  :param label_ext: 
-  :param test_size: number of examples to place in a separate tfrecord test_set
-  :param test_name: name of test set
-  :returns: 
-  :rtype: 
+    :param data_root: root directory that contains both image and label folder
+    :param record_name: output tfrecord file name for training dataset
+    :param image_dirname: folder name under data_root that contains all the images
+    :param image_ext: input image extension
+    :param label_dirname: older name under data_root that contains all the labels
+    :param label_ext: input label extension
+    :param test_size: number of examples to place in a separate tfrecord test_set
+    :param test_name: name of test set
+    :returns:
+    :rtype:
 
-  """
-  image_paths = _get_paths(join(data_root, image_dirname), image_ext)
-  label_paths = _get_paths(join(data_root, label_dirname), label_ext)
-  if len(image_paths) > len(label_paths):
-    logger.warning(f"labeled_set: using the first {len(label_paths)} images "
-                   f"(for which labels exist)")
-    del image_paths[len(label_paths):]
-  elif len(image_paths) < len(label_paths):
-    logger.warning(f"labeled_set: using the first {len(image_paths)} labels "
-                   f"(for which images exist)")
-    del label_paths[len(image_paths):]
-  assert len(image_paths) >= test_size
+    """
+    # get all qualified image and label full path
+    image_paths = _get_paths(join(data_root, image_dirname), image_ext)
+    label_paths = _get_paths(join(data_root, label_dirname), label_ext)
+    # check if the number of images and labels are the same
+    if len(image_paths) > len(label_paths):
+        logger.warning(f"labeled_set: using the first {len(label_paths)} images "
+                        f"(for which labels exist)")
+        # remove the extra images that don't have corresponding label files
+        del image_paths[len(label_paths):]
+    elif len(image_paths) < len(label_paths):
+        logger.warning(f"labeled_set: using the first {len(image_paths)} labels "
+                        f"(for which images exist)")
+        # remove the extra labels that don't have corresponding images
+        del label_paths[len(image_paths):]
+    # we want to make sure training data is larger than testing data
+    assert len(image_paths) >= test_size
 
-  def gen():
-    for image_path, label_path in zip(image_paths, label_paths):
-      image = img.open_as_float(image_path)
-      label = _label_loaders[label_ext](label_path)
-      # swap x,y for some reason
-      ys = label[:, 0].copy()
-      label[:, 0] = label[:, 1]
-      label[:, 1] = ys
-      yield dat.proto_from_example((image, label))
-  dat.write_set(islice(gen(), test_size), join(data_root, test_name))
-  dat.write_set(islice(gen(), test_size, None), join(data_root, record_name))
+    # helper function that actually loads stuff
+    def gen():
+        for image_path, label_path in zip(image_paths, label_paths):
+            image = img.open_as_float(image_path)
+            label = _label_loaders[label_ext](label_path)
+            # swap x,y for some reason
+            ys = label[:, 0].copy()
+            label[:, 0] = label[:, 1]
+            label[:, 1] = ys
+            yield dat.proto_from_example((image, label))
+
+    # first get the test tfrecord
+    dat.write_set(islice(gen(), test_size), join(data_root, test_name))
+    # then get the rest as the training tfrecord
+    dat.write_set(islice(gen(), test_size, None), join(data_root, record_name))
 
 
 def _image_dir(data_root, record_name='unlabeled_set.tfrecord',
@@ -108,13 +117,13 @@ def _image_dir(data_root, record_name='unlabeled_set.tfrecord',
   list of path names. The actual test set is not created, however, as this
   requires labels.
 
-  :param data_root: 
-  :param record_name: 
-  :param image_dirname: 
-  :param image_ext: 
-  :param test_size: 
-  :returns: 
-  :rtype: 
+  :param data_root:
+  :param record_name:
+  :param image_dirname:
+  :param image_ext:
+  :param test_size:
+  :returns:
+  :rtype:
 
   """
   image_paths = _get_paths(join(data_root, image_dirname), image_ext)

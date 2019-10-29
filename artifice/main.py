@@ -185,16 +185,16 @@ class Artifice:
 
     def __str__(self):
         return f"""{asctime()}:
-    data_root: {self.data_root}
-    model_root: {self.model_root}
-    figs_dir: {self.figs_dir}
-    ----
-    labeled: {self.labeled}
-    num_parallel_calls: {self.num_parallel_calls}
-    ----
-    input tile shape: {self.input_tile_shape}
-    output shapes: {self.output_tile_shapes}
-    todo: other attributes"""
+                data_root: {self.data_root}
+                model_root: {self.model_root}
+                figs_dir: {self.figs_dir}
+                ----
+                labeled: {self.labeled}
+                num_parallel_calls: {self.num_parallel_calls}
+                ----
+                input tile shape: {self.input_tile_shape}
+                output shapes: {self.output_tile_shapes}
+                todo: other attributes"""
 
     def __call__(self):
         for command in self.commands:
@@ -224,21 +224,21 @@ class Artifice:
 
     def _load_labeled(self):
         return dat.LabeledData(join(self.data_root, 'labeled_set.tfrecord'),
-                            size=self.data_size, **self._data_kwargs)
+                                size=self.data_size, **self._data_kwargs)
 
     def _load_unlabeled(self):
         return dat.UnlabeledData(join(self.data_root, 'unlabeled_set.tfrecord'),
-                                size=self.data_size, **self._data_kwargs)
+                                    size=self.data_size, **self._data_kwargs)
 
     def _load_annotated(self):
         transformation = (None if self.transformation is None else
-                        tform.transformations[self.transformation])
+                            tform.transformations[self.transformation])
         return dat.AnnotatedData(self.annotated_dir, transformation=transformation,
-                                size=self.data_size, **self._data_kwargs)
+                                    size=self.data_size, **self._data_kwargs)
 
     def _load_test(self):
         return dat.LabeledData(join(self.data_root, 'test_set.tfrecord'),
-                            size=self.test_size, **self._data_kwargs)
+                                size=self.test_size, **self._data_kwargs)
 
     def _load_train(self):
         if self.labeled:
@@ -263,6 +263,7 @@ class Artifice:
         
         if 'sparse' in self.model:
             kwargs['tol'] = self.tol
+        
         return kwargs
 
     def _load_model(self):
@@ -414,23 +415,19 @@ class Artifice:
 
     def vis_history(self):
         # todo: fix this for multiple models in the same model_dir
+        # history_files = glob(join(self.model_root, '*history.json'))
+        # hists = dict((fname, utils.json_load(fname)) for fname in history_files)
         vis.plot_hists_from_dir(self.model_root)
         vis.show(join(self.figs_dir, 'history.pdf'))
 
     def vis_predict(self):
         """Run prediction on the test set and visualize the output."""
-        # history_files = glob(join(self.model_root, '*history.json'))
-
-        # hists = dict((fname, utils.json_load(fname)) for fname in history_files)
-        # vis.plot_hist(hists, 'u_net')
-
         test_set = self._load_test()
         model = self._load_model()
         for image, dist_image, prediction in model.predict_visualization(test_set):
             fig, axes = vis.plot_image(image, image, dist_image, colorbar=True)
             axes[0, 1].plot(prediction[:, 1], prediction[:, 0], 'rx')
             axes[0, 2].plot(prediction[:, 1], prediction[:, 0], 'rx')
-            print(prediction)
             logger.info(f"prediction:\n{prediction}")
             vis.show(join(self.figs_dir, 'prediction.pdf'))
             if not self.show:

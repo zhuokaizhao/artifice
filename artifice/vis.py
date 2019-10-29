@@ -116,33 +116,5 @@ def plot_hists_from_dir(model_root, columns=10, scale=20):
     plt.legend()
     return fig, axes
 
-def plot_hist(hists, model_name, columns=10, scale=20):
-    hist_data = {}                # {property_name -> {model_name -> [values]}}
-    for hist in hists:
-        # model_name = pascalcase(basename(fname).replace('_history.json', ''))
-        for prop_name, values in hist.items():
-            if not isinstance(values, list):
-                continue
-            if hist_data.get(prop_name) is None:
-                hist_data[prop_name] = {}
-            hist_data[prop_name][model_name] = values
-
-    columns = min(columns, len(hist_data))
-    rows = max(1, len(hist_data) // columns)
-    fig, axes = plt.subplots(rows, columns, squeeze=False,
-                                figsize=(scale, scale * rows / columns))
-
-    for i, (prop_name, prop_data) in enumerate(hist_data.items()):
-        ax = axes[i // columns, i % columns]
-        for model_name, values in prop_data.items():
-            ax.plot(values, '-', label=model_name)
-            ax.set_title(titlecase(prop_name))
-            ax.set_xlabel('Epoch')
-            ax.set_ylabel('Loss')
-    fig.suptitle("Training")
-    plt.legend()
-    return fig, axes
-
-
 if __name__ == '__main__':
   print('Hello world!')
