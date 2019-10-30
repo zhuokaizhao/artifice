@@ -62,18 +62,18 @@ def _unbatch_outputs(outputs):
     return unbatched_outputs
 
 
-    def crop(inputs, shape=None, size=None):
-        if size is None:
-            assert shape is not None, 'one of `size` or `shape` must be provided'
-            size = shape[1:3]
-        top_crop = int(np.floor(int(inputs.shape[1] - size[0]) / 2))
-        bottom_crop = int(np.ceil(int(inputs.shape[1] - size[0]) / 2))
-        left_crop = int(np.floor(int(inputs.shape[2] - size[1]) / 2))
-        right_crop = int(np.ceil(int(inputs.shape[2] - size[1]) / 2))
-        outputs = keras.layers.Cropping2D(cropping=((top_crop, bottom_crop),
-                                                    (left_crop, right_crop)),
-                                            input_shape=inputs.shape)(inputs)
-        return outputs
+def crop(inputs, shape=None, size=None):
+    if size is None:
+        assert shape is not None, 'one of `size` or `shape` must be provided'
+        size = shape[1:3]
+    top_crop = int(np.floor(int(inputs.shape[1] - size[0]) / 2))
+    bottom_crop = int(np.ceil(int(inputs.shape[1] - size[0]) / 2))
+    left_crop = int(np.floor(int(inputs.shape[2] - size[1]) / 2))
+    right_crop = int(np.ceil(int(inputs.shape[2] - size[1]) / 2))
+    outputs = keras.layers.Cropping2D(cropping=((top_crop, bottom_crop),
+                                                (left_crop, right_crop)),
+                                        input_shape=inputs.shape)(inputs)
+    return outputs
 
 
 def _crop_like_conv(inputs,
