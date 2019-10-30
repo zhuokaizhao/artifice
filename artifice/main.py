@@ -260,10 +260,10 @@ class Artifice:
             or self.model == 'better-sparse'
             or self.model == 'auto-sparse'):
             kwargs['batch_size'] = self.batch_size
-        
+
         if 'sparse' in self.model:
             kwargs['tol'] = self.tol
-        
+
         return kwargs
 
     def _load_model(self):
@@ -328,7 +328,7 @@ class Artifice:
                 self._load_unlabeled(), model=self._load_model(), **kwargs)
         else:
             raise NotImplementedError(f"{self.priority_mode} priority mode")
-        
+
         prioritizer.run(seconds=self.seconds)
 
     def annotate(self):
@@ -350,7 +350,7 @@ class Artifice:
                                             **kwargs)
         else:
             raise NotImplementedError(f"{self.annotation_mode} annotation mode")
-        
+
         annotator.run(seconds=self.seconds)
 
     def train(self):
@@ -384,7 +384,7 @@ class Artifice:
         if not errors:
             logger.warning(f"found ZERO objects, num_failed: {num_failed}")
             return
-        
+
         avg_error = errors.mean(axis=0)
         total_num_objects = self.test_size * self.num_objects
         num_detected = total_num_objects - num_failed
@@ -429,6 +429,17 @@ class Artifice:
             axes[0, 1].plot(prediction[:, 1], prediction[:, 0], 'rx')
             axes[0, 2].plot(prediction[:, 1], prediction[:, 0], 'rx')
             logger.info(f"prediction:\n{prediction}")
+            vis.show(join(self.figs_dir, 'prediction.pdf'))
+            if not self.show:
+                break
+
+    # similar to vis_predict, but now only show proxy images
+    def vis_proxy(self):
+        # load the test sample and model
+        test_set = self._load_test()
+        model = self._load_model()
+        for image, dist_image, prediction in model.predict_visualization(test_set):
+            fig, axes = vis.plot_image(image, image, dist_image, colorbar=True)
             vis.show(join(self.figs_dir, 'prediction.pdf'))
             if not self.show:
                 break
