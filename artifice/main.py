@@ -458,6 +458,7 @@ class Artifice:
         driver = gdal.GetDriverByName('GTiff')
         dataset = driver.Create(dst_filename, int(x_pixels), int(y_pixels), 1, gdal.GDT_Float32)
         for image, dist_image, prediction in model.predict_visualization(test_set):
+            print(dist_image.shape)
             dataset.GetRasterBand(1).WriteArray(dist_image)
 
     def vis_outputs(self):
