@@ -451,15 +451,15 @@ class Artifice:
         test_set = self._load_test()
         model = self._load_model()
         dst_filename = 'dist_image.tiff'
-        x_pixels = test_set.output_tile_shape[0]  # number of pixels in x
-        y_pixels = test_set.output_tile_shape[1]  # number of pixels in y
         print('x =', x_pixels)
         print('y =', y_pixels)
         driver = gdal.GetDriverByName('GTiff')
         dataset = driver.Create(dst_filename, int(x_pixels), int(y_pixels), 1, gdal.GDT_Float32)
         for image, dist_image, prediction in model.predict_visualization(test_set):
+            x_pixels = dist_image.shape[0]  # number of pixels in x
+            y_pixels = dist_image.shape[1]  # number of pixels in y
             print(dist_image.shape)
-            dataset.GetRasterBand(1).WriteArray(dist_image)
+            dataset.GetRasterBand(1).WriteArray(dist_image.reshape(x_pixels, y_pixels))
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""
