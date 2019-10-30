@@ -433,14 +433,14 @@ class Artifice:
             if not self.show:
                 break
 
-    # similar to vis_predict, but now only show proxy images
+    # similar to vis_predict, but now only save proxy images
     def vis_proxy(self):
         # load the test sample and model
         test_set = self._load_test()
         model = self._load_model()
         for image, dist_image, prediction in model.predict_visualization(test_set):
             fig, axes = vis.plot_image(image, image, dist_image, colorbar=True)
-            vis.show(join(self.figs_dir, 'prediction.pdf'))
+            vis.show('proxy.pdf', join(self.figs_dir, 'proxy.pdf'))
             if not self.show:
                 break
 
