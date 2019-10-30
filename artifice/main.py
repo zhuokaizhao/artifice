@@ -453,8 +453,10 @@ class Artifice:
         dst_filename = 'dist_image.tiff'
         x_pixels = test_set.output_tile_shape[0]  # number of pixels in x
         y_pixels = test_set.output_tile_shape[1]  # number of pixels in y
+        print('x =', x_pixels)
+        print('y =', y_pixels)
         driver = gdal.GetDriverByName('GTiff')
-        dataset = driver.Create(dst_filename,x_pixels, y_pixels, 1, gdal.GDT_Float32)
+        dataset = driver.Create(dst_filename, int(x_pixels), int(y_pixels), 1, gdal.GDT_Float32)
         for image, dist_image, prediction in model.predict_visualization(test_set):
             dataset.GetRasterBand(1).WriteArray(dist_image)
 
