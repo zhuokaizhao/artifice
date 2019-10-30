@@ -450,23 +450,13 @@ class Artifice:
     def vis_distance_raster(self):
         test_set = self._load_test()
         model = self._load_model()
-        outputs = []
-        dist_tiles = []
-        p = test_set.image_padding()
-        for batch in test_set.prediction_input():
-            tiles += [tile[p[0][0]:, p[1][0]:] for tile in list(batch)]
-            new_outputs = model._unbatch_outputs(self.model.predict_on_batch(batch))
-            outputs += new_outputs
-            dist_tiles += [output[-1] for output in new_outputs]
-            while len(outputs) >= test_set.num_tiles:
-                dist_image = test_set.untile(dist_tiles[:test_set.num_tiles])
-
         dst_filename = 'dist_image.tiff'
         x_pixels = test_set.output_tile_shape[0]  # number of pixels in x
         y_pixels = test_set.output_tile_shape[1]  # number of pixels in y
         driver = gdal.GetDriverByName('GTiff')
         dataset = driver.Create(dst_filename,x_pixels, y_pixels, 1, gdal.GDT_Float32)
-        dataset.GetRasterBand(1).WriteArray(dist_image)
+        for image, dist_image, prediction in model.predict_visualization(test_set):
+            dataset.GetRasterBand(1).WriteArray(dist_image)
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""
