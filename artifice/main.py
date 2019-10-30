@@ -459,6 +459,7 @@ class Artifice:
             print('y =', y_pixels)
             dataset = driver.Create(dst_filename, int(x_pixels), int(y_pixels), 1, gdal.GDT_Float32)
             dataset.GetRasterBand(1).WriteArray(dist_image.reshape(x_pixels, y_pixels))
+            break
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""
