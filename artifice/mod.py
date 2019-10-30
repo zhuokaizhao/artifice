@@ -494,21 +494,20 @@ class UNet(ArtificeModel):
     def compute_output_tile_shape(self):
         return self.compute_output_tile_shape_(self.base_shape, self.num_levels, self.level_depth)
 
-  @staticmethod
-  def compute_output_tile_shapes_(base_shape, num_levels, level_depth):
-    """Compute the shape of the output tiles at every level, bottom to top."""
-    shapes = []
-    tile_shape = np.array(base_shape)
-    shapes.append(list(tile_shape))
-    for _ in range(num_levels - 1):
-      tile_shape *= 2
-      tile_shape -= 2 * level_depth
-      shapes.append(list(tile_shape))
-    return shapes
+    @staticmethod
+    def compute_output_tile_shapes_(base_shape, num_levels, level_depth):
+        """Compute the shape of the output tiles at every level, bottom to top."""
+        shapes = []
+        tile_shape = np.array(base_shape)
+        shapes.append(list(tile_shape))
+        for _ in range(num_levels - 1):
+            tile_shape *= 2
+            tile_shape -= 2 * level_depth
+            shapes.append(list(tile_shape))
+        return shapes
 
-  def compute_output_tile_shapes(self):
-    return self.compute_output_tile_shapes_(
-      self.base_shape, self.num_levels, self.level_depth)
+    def compute_output_tile_shapes(self):
+        return self.compute_output_tile_shapes_(self.base_shape, self.num_levels, self.level_depth)
 
     @staticmethod
     def compute_level_input_shapes_(base_shape, num_levels, level_depth):
@@ -576,14 +575,14 @@ class UNet(ArtificeModel):
         outputs = []
 
         for level, filters in enumerate(reversed(self.level_filters)):
-        for _ in range(self.level_depth):
-            inputs = conv(inputs, filters)
-        if level < self.num_levels - 1:
-            level_outputs.append(inputs)
-            inputs = keras.layers.MaxPool2D()(inputs)
-        else:
-            outputs.append(conv(inputs, 1, kernel_shape=[1, 1], activation=None,
-                                norm=False, name='output_0'))
+            for _ in range(self.level_depth):
+                inputs = conv(inputs, filters)
+            if level < self.num_levels - 1:
+                level_outputs.append(inputs)
+                inputs = keras.layers.MaxPool2D()(inputs)
+            else:
+                outputs.append(conv(inputs, 1, kernel_shape=[1, 1], activation=None,
+                                    norm=False, name='output_0'))
 
         level_outputs = reversed(level_outputs)
         for i, filters in enumerate(self.level_filters[1:]):
@@ -608,7 +607,7 @@ class UNet(ArtificeModel):
         return [pose_image] + outputs
 
     def predict(self, art_data, multiscale=False):
-    """Run prediction, reassembling tiles, with the Artifice data."""
+        """Run prediction, reassembling tiles, with the Artifice data."""
         if tf.executing_eagerly():
             outputs = []
         for i, batch in enumerate(art_data.prediction_input()):
@@ -627,7 +626,7 @@ class UNet(ArtificeModel):
                     .make_one_shot_iterator()
                     .get_next())
         with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
+            sess.run(tf.global_variables_initializer())
         for i in itertools.count():
             try:
                 batch = sess.run(next_batch)
@@ -694,18 +693,18 @@ class UNet(ArtificeModel):
             total_num_failed = 0
             for i, (batch_tiles, batch_labels) in enumerate(
                     art_data.evaluation_input()):
-            if i % 10 == 0:
-                logger.info(f"evaluating batch {i} / {art_data.steps_per_epoch}")
-                tile_labels += list(batch_labels)
-                outputs += _unbatch_outputs(self.model.predict_on_batch(batch_tiles))
-            while len(outputs) >= art_data.num_tiles:
-                label = art_data.untile_points(tile_labels[:art_data.num_tiles])
-                prediction = art_data.analyze_outputs(outputs, multiscale=multiscale)
-                error, num_failed = dat.evaluate_prediction(label, prediction)
-                total_num_failed += num_failed
-                errors += error[error[:, 0] >= 0].tolist()
-                del tile_labels[:art_data.num_tiles]
-                del outputs[:art_data.num_tiles]
+                if i % 10 == 0:
+                    logger.info(f"evaluating batch {i} / {art_data.steps_per_epoch}")
+                    tile_labels += list(batch_labels)
+                    outputs += _unbatch_outputs(self.model.predict_on_batch(batch_tiles))
+                while len(outputs) >= art_data.num_tiles:
+                    label = art_data.untile_points(tile_labels[:art_data.num_tiles])
+                    prediction = art_data.analyze_outputs(outputs, multiscale=multiscale)
+                    error, num_failed = dat.evaluate_prediction(label, prediction)
+                    total_num_failed += num_failed
+                    errors += error[error[:, 0] >= 0].tolist()
+                    del tile_labels[:art_data.num_tiles]
+                    del outputs[:art_data.num_tiles]
         else:
             raise NotImplementedError("evaluation on patient execution")
         return np.array(errors), total_num_failed
