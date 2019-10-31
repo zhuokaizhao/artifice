@@ -595,6 +595,9 @@ def main():
     parser.add_argument('--seconds', '--time', '--reload', '-t', '-r', nargs='?',
                         default=0, const=-1, type=int, help=docs.seconds)
 
+    # visualize testing result
+    parser.add_argument('--vis-number', nargs=1, default=0, type=int)
+
     args = parser.parse_args()
     art = Artifice(commands=args.commands,
                     convert_mode=args.convert_mode,
