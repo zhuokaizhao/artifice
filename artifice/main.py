@@ -476,11 +476,11 @@ class Artifice:
                 break
             i += 1
 
-        image_name = 'figs/image_' + vis_number + '.tiff'
+        image_name = 'figs/image_' + str(vis_number) + '.tiff'
         vis.save_raster(all_images[vis_number], image_name)
-        dist_name = 'figs/dist_image_' + vis_number + '.tiff'
+        dist_name = 'figs/dist_image_' + str(vis_number) + '.tiff'
         vis.save_raster(all_dist_images[vis_number], dist_name)
-        pose_name = 'figs/pose_image_' + vis_number +'.tiff'
+        pose_name = 'figs/pose_image_' + str(vis_number) +'.tiff'
         vis.save_raster(all_pose_images[vis_number], pose_name)
 
     def vis_outputs(self):
