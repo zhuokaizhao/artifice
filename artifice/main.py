@@ -459,8 +459,7 @@ class Artifice:
         all_predictions = []
         test_size = self.test_size
         print('There are', test_size, 'images in the test data set')
-        print(self.vis_number)
-        if (self.vis_number > test_size):
+        if (self.vis_number[0] > test_size):
             print('Requested visualization number is out of range')
             return
 
@@ -470,7 +469,7 @@ class Artifice:
             all_images.append(image)
             all_dist_images.append(dist_image)
             all_predictions.append(prediction)
-            if i == self.vis_number:
+            if i == self.vis_number[0]:
                 break
             i += 1
 
