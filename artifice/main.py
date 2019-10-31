@@ -457,7 +457,8 @@ class Artifice:
         all_images = []
         all_dist_images = []
         all_predictions = []
-        all_pose_images = []
+        all_size_images = []
+        all_shape_images = []
         test_size = self.test_size
         vis_number = self.vis_number[0]
         print('There are', test_size, 'images in the test data set')
@@ -466,12 +467,13 @@ class Artifice:
             return
 
         i = 0
-        for image, dist_image, prediction, pose_image in model.predict_visualization(test_set):
+        for image, dist_image, prediction, size_image, shape_image in model.predict_visualization(test_set):
             print('Testing on', i)
             all_images.append(image)
             all_dist_images.append(dist_image)
             all_predictions.append(prediction)
-            all_pose_images.append(pose_image)
+            all_size_images.append(size_image)
+            all_shape_images.append(shape_image)
             if i == vis_number:
                 break
             i += 1
@@ -480,8 +482,10 @@ class Artifice:
         vis.save_raster(all_images[vis_number], image_name)
         dist_name = 'figs/dist_image_' + str(vis_number) + '.tiff'
         vis.save_raster(all_dist_images[vis_number], dist_name)
-        pose_name = 'figs/pose_image_' + str(vis_number) +'.tiff'
-        vis.save_raster(all_pose_images[vis_number], pose_name)
+        pose_name = 'figs/size_image_' + str(vis_number) +'.tiff'
+        vis.save_raster(all_size_images[vis_number], pose_name)
+        pose_name = 'figs/shape_image_' + str(vis_number) +'.tiff'
+        vis.save_raster(all_shape_images[vis_number], pose_name)
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""

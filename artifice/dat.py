@@ -545,13 +545,15 @@ class ArtificeData(object):
 
     pose_image = self.untile([output[0]
                               for output in outputs[:self.num_tiles]])
+    size_image = pose_image[:, :, 1]
+    shape_image = pose_image[:, :, 2]
     print(pose_image.shape)
     prediction = np.empty((peaks.shape[0], 1 + pose_image.shape[-1]),
                           dtype=np.float32)
     for i, peak in enumerate(peaks):
       prediction[i, :2] = peak
       prediction[i, 2:] = pose_image[int(peak[0]), int(peak[1]), 1:]
-    return prediction, pose_image
+    return prediction, size_image, shape_image
 
   def accumulate(self, accumulator):
     """Runs the accumulators across the dataset.
