@@ -458,8 +458,9 @@ class Artifice:
         all_dist_images = []
         all_predictions = []
         test_size = self.test_size
+        vis_number = self.vis_number[0]
         print('There are', test_size, 'images in the test data set')
-        if (self.vis_number[0] > test_size):
+        if (vis_number > test_size):
             print('Requested visualization number is out of range')
             return
 
@@ -469,14 +470,14 @@ class Artifice:
             all_images.append(image)
             all_dist_images.append(dist_image)
             all_predictions.append(prediction)
-            if i == self.vis_number[0]:
+            if i == vis_number:
                 break
             i += 1
 
         image_name = 'figs/image.tiff'
-        vis.save_raster(image_name, image_name)
+        vis.save_raster(all_images[vis_number], image_name)
         dist_name = 'figs/dist_image.tiff'
-        vis.save_raster(dist_image, dist_name)
+        vis.save_raster(all_dist_images[vis_number], dist_name)
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""
