@@ -15,6 +15,8 @@ import numpy as np
 from artifice.log import logger
 from artifice import utils
 
+from osgeo import gdal
+
 
 _show = True
 
@@ -115,6 +117,15 @@ def plot_hists_from_dir(model_root, columns=10, scale=20):
     fig.suptitle("Training")
     plt.legend()
     return fig, axes
+
+def save_raster(image, filename):
+    driver = gdal.GetDriverByName('GTiff')
+    x_pixels = image.shape[0]  # number of pixels in x
+    y_pixels = image.shape[1]  # number of pixels in y
+    print('x =', x_pixels)
+    print('y =', y_pixels)
+    dataset = driver.Create(filename, int(x_pixels), int(y_pixels), 1, gdal.GDT_Float32)
+    dataset.GetRasterBand(1).WriteArray(image.reshape(x_pixels, y_pixels))
 
 if __name__ == '__main__':
   print('Hello world!')

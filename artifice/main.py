@@ -24,7 +24,6 @@ from artifice import ann
 from artifice import prio
 from artifice import tform
 
-from osgeo import gdal
 
 
 def _system_checks():
@@ -98,7 +97,8 @@ class Artifice:
                 eager,
                 show,
                 cache,
-                seconds):
+                seconds,
+                vis_number):
         # main
         self.commands = commands
 
@@ -180,6 +180,9 @@ class Artifice:
         # ensure directories exist
         _ensure_dirs_exist([self.data_root, self.model_root, self.figs_dir,
                             self.cache_dir, self.annotated_dir])
+
+        # visualizing testing results
+        self.vis_number = vis_number
 
     """
     Helper functions.
@@ -446,20 +449,34 @@ class Artifice:
             if not self.show:
                 break
 
-    # get the distance image in raster format
-    def vis_distance_raster(self):
+    # get the testing result images in raster format
+    def vis_test_raster(self):
         test_set = self._load_test()
         model = self._load_model()
-        dst_filename = 'dist_image.tiff'
-        driver = gdal.GetDriverByName('GTiff')
+
+        all_images = []
+        all_dist_images = []
+        all_predictions = []
+        test_size = self.test_size
+        print('There are', test_size, 'images in the test data set')
+        if (self.vis_number > test_size):
+            print('Requested visualization number is out of range')
+            return
+
+        i = 0
         for image, dist_image, prediction in model.predict_visualization(test_set):
-            x_pixels = dist_image.shape[0]  # number of pixels in x
-            y_pixels = dist_image.shape[1]  # number of pixels in y
-            print('x =', x_pixels)
-            print('y =', y_pixels)
-            dataset = driver.Create(dst_filename, int(x_pixels), int(y_pixels), 1, gdal.GDT_Float32)
-            dataset.GetRasterBand(1).WriteArray(dist_image.reshape(x_pixels, y_pixels))
-            break
+            print('Testing on', i)
+            all_images.append(image)
+            all_dist_images.append(dist_image)
+            all_predictions.append(prediction)
+            if i == self.vis_number:
+                break
+            i += 1
+
+        image_name = 'figs/image.tiff'
+        vis.save_raster(image_name, image_name)
+        dist_name = 'figs/dist_image.tiff'
+        vis.save_raster(dist_image, dist_name)
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""
