@@ -657,7 +657,7 @@ class UNet(ArtificeModel):
                     image = art_data.untile(tiles[:art_data.num_tiles])
                     dist_image = art_data.untile(dist_tiles[:art_data.num_tiles])
                     prediction, size_image, shape_image = art_data.analyze_outputs(outputs)
-                    yield (image, dist_image, prediction, size_image. shape_image)
+                    yield (image, dist_image, prediction, size_image, shape_image)
                     del outputs[:art_data.num_tiles]
                     del tiles[:art_data.num_tiles]
                     del dist_tiles[:art_data.num_tiles]
