@@ -637,7 +637,8 @@ def main():
                     eager=(not args.patient),
                     show=args.show,
                     cache=args.cache,
-                    seconds=args.seconds)
+                    seconds=args.seconds,
+                    vis_number=args.vis_number)
     logger.info(art)
     art()
 
