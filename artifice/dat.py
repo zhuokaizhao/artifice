@@ -545,6 +545,7 @@ class ArtificeData(object):
 
     pose_image = self.untile([output[0]
                               for output in outputs[:self.num_tiles]])
+    print(pose_image.shape)
     prediction = np.empty((peaks.shape[0], 1 + pose_image.shape[-1]),
                           dtype=np.float32)
     for i, peak in enumerate(peaks):
