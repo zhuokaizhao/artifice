@@ -550,7 +550,7 @@ class ArtificeData(object):
     for i, peak in enumerate(peaks):
       prediction[i, :2] = peak
       prediction[i, 2:] = pose_image[int(peak[0]), int(peak[1]), 1:]
-    return prediction
+    return prediction, pose_image
 
   def accumulate(self, accumulator):
     """Runs the accumulators across the dataset.

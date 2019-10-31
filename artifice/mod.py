@@ -656,8 +656,8 @@ class UNet(ArtificeModel):
                 while len(outputs) >= art_data.num_tiles:
                     image = art_data.untile(tiles[:art_data.num_tiles])
                     dist_image = art_data.untile(dist_tiles[:art_data.num_tiles])
-                    prediction = art_data.analyze_outputs(outputs)
-                    yield (image, dist_image, prediction)
+                    prediction, pose_image = art_data.analyze_outputs(outputs)
+                    yield (image, dist_image, prediction, pose_image)
                     del outputs[:art_data.num_tiles]
                     del tiles[:art_data.num_tiles]
                     del dist_tiles[:art_data.num_tiles]
