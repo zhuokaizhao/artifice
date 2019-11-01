@@ -478,14 +478,29 @@ class Artifice:
                 break
             i += 1
 
+        # save image
         image_name = 'figs/image_' + str(vis_number) + '.tiff'
+        image_name_txt = 'figs/image_' + str(vis_number) + '.txt'
         vis.save_raster(all_images[vis_number], image_name)
+        np.savetxt(image_name_txt, all_images[vis_number], fmt='%d')
+
+        # save distance image
         dist_name = 'figs/dist_image_' + str(vis_number) + '.tiff'
+        dist_name_txt = 'figs/dist_image_' + str(vis_number) + '.txt'
         vis.save_raster(all_dist_images[vis_number], dist_name)
-        pose_name = 'figs/size_image_' + str(vis_number) +'.tiff'
-        vis.save_raster(all_size_images[vis_number], pose_name)
-        pose_name = 'figs/shape_image_' + str(vis_number) +'.tiff'
-        vis.save_raster(all_shape_images[vis_number], pose_name)
+        np.savetxt(dist_name_txt, all_dist_images[vis_number], fmt='%d')
+
+        # save size image
+        size_name = 'figs/size_image_' + str(vis_number) +'.tiff'
+        size_name_txt = 'figs/size_image_' + str(vis_number) +'.txt'
+        vis.save_raster(all_size_images[vis_number], size_name)
+        np.savetxt(size_name_txt, all_size_images[vis_number], fmt='%d')
+
+        # save shape image
+        shape_name = 'figs/shape_image_' + str(vis_number) +'.tiff'
+        shape_name_txt = 'figs/shape_image_' + str(vis_number) +'.txt'
+        vis.save_raster(all_shape_images[vis_number], shape_name)
+        np.savetxt(shape_name_txt, all_shape_images[vis_number], fmt='%d')
 
     def vis_outputs(self):
         """Run prediction on the test set and visualize the output."""
