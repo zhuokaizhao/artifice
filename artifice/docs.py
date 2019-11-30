@@ -2,11 +2,11 @@ description = "Artifice."
 commands = "Artifice command to run. Can be multiple."
 
 # file settings
-data_root = "todo"
-model_root = "todo"
+data_dir = "Input data directory. Default = data/default/"
+model_dir = "Output trained model directory. Default = model/default/"
 overwrite = "Overwrite existing models."
-deep = "todo"
-figs_dir = "todo"
+deep = "If the deep training is enabled"
+graph_dir = "Output figure directory. Default = figs/"
 
 # data settings
 convert_mode = "todo"
@@ -46,14 +46,14 @@ use_var = "todo"
 
 # model hyperparameters
 dropout = "todo"
-initial_epoch = """Initial epoch, starting at 0."""
-epochs = """Number of training epochs. Default is 1."""
-learning_rate = """Learning rate."""
+initial_epoch = "Initial epoch, starting at 0."
+epochs = "Number of training epochs. Default is 1."
+learning_rate = "Learning rate."
 tol = "todo"
 
 # runtime settings
 num_parallel_calls = "Threadpool size. Default (-1) uses available cores."
-verbose = "Artifice verbosity. Default is 2 (debug level)."
+verbose = "Artifice verbosity. Default is 0."
 keras_verbose = "Keras verbosity. Default is 1 (progress bars)."
 patient = "Disable eager execution."
 show = "Show plots rather than save them."
