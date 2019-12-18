@@ -6,7 +6,7 @@ data_dir = "Input data directory. Default = data/default/"
 model_dir = "Output trained model directory. Default = model/default/"
 overwrite = "Overwrite existing models."
 deep = "If the deep training is enabled"
-graph_dir = "Output figure directory. Default = figs/"
+figs_dir = "Output figure directory. Default = figs/"
 
 # data settings
 convert_mode = "todo"

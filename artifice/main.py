@@ -474,10 +474,10 @@ def main():
 						action='store_true',
 						help=docs.deep)
 	# output figure directory
-	parser.add_argument('--graph-dir', '-g',
+	parser.add_argument('--figs-dir', '-g',
 						nargs=1,
 						default=['figs/'],
-						help=docs.graph_dir)
+						help=docs.figs_dir)
 
 	# data settings
 	parser.add_argument('--convert-mode',
