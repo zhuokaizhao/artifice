@@ -355,6 +355,7 @@ class Artifice:
 					seconds=self.seconds,
 					cache=self.cache)
 
+
 	def predict(self):
 		"""Run prediction on the unlabeled set."""
 		unlabeled_set = self._load_unlabeled()
@@ -444,6 +445,7 @@ class Artifice:
 			vis.show(join(self.figs_dir, 'model_outputs.pdf'))
 			if not self.show:
 				break
+
 
 
 def main():
