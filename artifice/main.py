@@ -617,7 +617,7 @@ def main():
 						default=[0.1],
 						type=float,
 						help=docs.learning_rate)
-	parser.add_argument('--tolerance', '--tol',
+	parser.add_argument('--tol',
 						nargs=1,
 						default=[0.1],
 						type=float,
