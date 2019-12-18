@@ -355,11 +355,10 @@ class SparseConv2DTranspose(keras.layers.Layer):
         self.bias_constraint = bias_constraint
 
         self.block_size = utils.listify(block_size, 2)
-            self.output_block_size = [conv_utils.deconv_output_length(
-            self.block_size[i],
-            self.kernel_size[i],
-            'valid',
-            stride=self.strides[i]) for i in [0, 1]]
+        self.output_block_size = [conv_utils.deconv_output_length(self.block_size[i],
+                                                                self.kernel_size[i],
+                                                                'valid',
+                                                                stride=self.strides[i]) for i in [0, 1]]
 
         self.block_offset = [0, 0]
         self.output_block_offset = self.block_offset
